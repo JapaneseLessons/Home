@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Studio Ghibli Memory Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Fonts for Ghibli-style text -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Quicksand', Arial, sans-serif;
+      background: linear-gradient(135deg, #e6f0e6 0%, #f5e6ff 100%);
+      /* Watercolor Ghibli-inspired background */
+      background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80');
+      background-size: cover;
+      background-attachment: fixed;
+      color: #2e5d3b;
+      overflow-x: hidden;
+    }
+    .overlay {
+      position: fixed;
+      top:0;left:0;right:0;bottom:0;
+      background: rgba(255,255,255,0.45);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .container {
+      max-width: 750px;
+      margin: 40px auto 0 auto;
+      background: rgba(255,255,255,0.88);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(60, 60, 60, 0.18);
+      padding: 32px 24px 24px 24px;
+      position: relative;
+      z-index: 1;
+    }
+    h1 {
+      font-family: 'Mochiy Pop One', cursive;
+      font-size: 2.3em;
+      color: #446644;
+      text-align: center;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 8px #fff9;
+    }
+    .instructions {
+      text-align: center;
+      font-size: 1.1em;
+      margin-bottom: 24px;
+      color: #5e7d5e;
+    }
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 110px);
+      grid-gap: 18px;
+      justify-content: center;
+      margin: 24px 0;
+    }
+    .card {
+      width: 110px;
+      height: 150px;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(80, 100, 80, 0.18);
+      background: #fffbe7;
+      position: relative;
+      cursor: pointer;
+      perspective: 700px;
+      transition: transform 0.12s;
+    }
+    .card.flipped, .card.matched {
+      cursor: default;
+    }
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(.4,2,.6,1);
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    .card.flipped .card-inner, .card.matched .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      user-select: none;
+    }
+    .card-front {
+      background: #e8f6ef;
+      color: #36513c;
+      font-size: 1.15em;
+      font-family: 'Quicksand', sans-serif;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .card-front .icon {
+      font-size: 2.3em;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 2px 6px #b5c7b8);
+    }
+    .card-back {
+      background: #a7c7b7 url('https://upload.wikimedia.org/wikipedia/commons/2/2b/Susuwatari.png') center 30px/38px no-repeat;
+      color: #fff;
+      font-size: 2em;
+      justify-content: flex-end;
+      padding-bottom: 20px;
+      letter-spacing: 2px;
+    }
+    .score-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 0 12px 0;
+      font-size: 1.1em;
+    }
+    .score-panel button {
+      background: #e0f7fa;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1em;
+      color: #2e5d3b;
+      cursor: pointer;
+      box-shadow: 0 2px 6px #b5c7b8;
+      transition: background 0.2s;
+    }
+    .score-panel button:hover {
+      background: #b2dfdb;
+    }
+    .modal {
+      position: fixed;
+      top:0;left:0;right:0;bottom:0;
+      background: rgba(30,50,30,0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .modal.hidden {
+      display: none;
+    }
+    .modal-content {
+      background: #fffbe7;
+      border-radius: 20px;
+      box-shadow: 0 4px 32px #b5c7b8;
+      padding: 36px 32px 28px 32px;
+      text-align: center;
+      font-family: 'Quicksand', Arial, sans-serif;
+      color: #446644;
+      position: relative;
+      min-width: 260px;
+    }
+    .modal-content h2 {
+      font-family: 'Mochiy Pop One', cursive;
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    .modal-content button {
+      margin-top: 18px;
+      background: #e0f7fa;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 1em;
+      color: #2e5d3b;
+      cursor: pointer;
+      box-shadow: 0 2px 6px #b5c7b8;
+      transition: background 0.2s;
+    }
+    .modal-content button:hover {
+      background: #b2dfdb;
+    }
+    @media (max-width: 600px) {
+      .memory-grid {
+        grid-template-columns: repeat(2, 110px);
+        grid-gap: 14px;
+      }
+      .container {
+        padding: 12px 2vw 18px 2vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="container">
+    <h1>Studio Ghibli Memory Game</h1>
+    <div class="instructions">Match the Ghibli characters and items in English and Japanese!</div>
+    <div class="score-panel">
+      <span>Attempts: <span id="attempts">0</span></span>
+      <button id="restart-btn">Restart</button>
+    </div>
+    <div class="memory-grid"></div>
+    <div id="win-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Congratulations!</h2>
+        <p>You completed the game in <span id="final-attempts"></span> attempts!</p>
+        <button id="close-modal">Close</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Ghibli memory pairs: {icon, english, japanese}
+    const pairs = [
+      { icon: "🌳", en: "Totoro", jp: "トトロ" },
+      { icon: "🐱", en: "Catbus", jp: "ネコバス" },
+      { icon: "🔥", en: "Calcifer", jp: "カルシファー" },
+      { icon: "👧", en: "Chihiro", jp: "千尋" },
+      { icon: "🧹", en: "Kiki", jp: "キキ" },
+      { icon: "🐟", en: "Ponyo", jp: "ポニョ" },
+      { icon: "🌲", en: "Kodama", jp: "こだま" },
+      { icon: "🖤", en: "Soot Sprite", jp: "まっくろくろすけ" }
+    ];
+
+    // Build cards: each pair is two cards (en & jp)
+    function buildCards() {
+      let cards = [];
+      pairs.forEach((pair, i) => {
+        cards.push({
+          id: i + "-en",
+          pairId: i,
+          label: pair.en,
+          icon: pair.icon
+        });
+        cards.push({
+          id: i + "-jp",
+          pairId: i,
+          label: pair.jp,
+          icon: pair.icon
+        });
+      });
+      return shuffle(cards);
+    }
+
+    // Fisher-Yates shuffle
+    function shuffle(array) {
+      let m = array.length, t, i;
+      while (m) {
+        i = Math.floor(Math.random() * m--);
+        t = array[m];
+        array[m] = array[i];
+        array[i] = t;
+      }
+      return array;
+    }
+
+    // DOM references
+    const grid = document.querySelector('.memory-grid');
+    const attemptsElem = document.getElementById('attempts');
+    const restartBtn = document.getElementById('restart-btn');
+    const winModal = document.getElementById('win-modal');
+    const finalAttemptsElem = document.getElementById('final-attempts');
+    const closeModalBtn = document.getElementById('close-modal');
+
+    // Game state
+    let cards = [];
+    let flipped = [];
+    let matched = 0;
+    let attempts = 0;
+    let lock = false;
+
+    function renderCards() {
+      grid.innerHTML = '';
+      cards.forEach((card, idx) => {
+        const cardElem = document.createElement('div');
+        cardElem.className = 'card';
+        cardElem.dataset.idx = idx;
+        cardElem.innerHTML = `
+          <div class="card-inner">
+            <div class="card-back"></div>
+            <div class="card-front">
+              <span class="icon">${card.icon}</span>
+              <span>${card.label}</span>
+            </div>
+          </div>
+        `;
+        cardElem.addEventListener('click', () => onCardClick(cardElem, idx));
+        grid.appendChild(cardElem);
+      });
+    }
+
+    function onCardClick(cardElem, idx) {
+      if (lock) return;
+      if (cardElem.classList.contains('flipped') || cardElem.classList.contains('matched')) return;
+      cardElem.classList.add('flipped');
+      flipped.push({ idx, cardElem });
+      if (flipped.length === 2) {
+        lock = true;
+        attempts++;
+        attemptsElem.textContent = attempts;
+        const [a, b] = flipped;
+        if (
+          cards[a.idx].pairId === cards[b.idx].pairId &&
+          cards[a.idx].id !== cards[b.idx].id
+        ) {
+          // Match!
+          setTimeout(() => {
+            a.cardElem.classList.add('matched');
+            b.cardElem.classList.add('matched');
+            matched += 2;
+            flipped = [];
+            lock = false;
+            if (matched === cards.length) {
+              setTimeout(showWinModal, 650);
+            }
+          }, 600);
+        } else {
+          // Not a match
+          setTimeout(() => {
+            a.cardElem.classList.remove('flipped');
+            b.cardElem.classList.remove('flipped');
+            flipped = [];
+            lock = false;
+          }, 1100);
+        }
+      }
+    }
+
+    function showWinModal() {
+      finalAttemptsElem.textContent = attempts;
+      winModal.classList.remove('hidden');
+    }
+
+    function resetGame() {
+      attempts = 0;
+      matched = 0;
+      flipped = [];
+      lock = false;
+      attemptsElem.textContent = attempts;
+      winModal.classList.add('hidden');
+      cards = buildCards();
+      renderCards();
+    }
+
+    restartBtn.onclick = resetGame;
+    closeModalBtn.onclick = () => winModal.classList.add('hidden');
+
+    // Start game
+    cards = buildCards();
+    renderCards();
+  </script>
+</body>
+</html>
