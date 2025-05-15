@@ -6,8 +6,7 @@
     <title>Japanese Verb Memory Game</title>
     <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li><a href="index.htm">Home</a></li>
-      <li><a href="verbs1flash.htm">Beginner Verbs 1: Flash Cards</a></li>
+    <li><a href="index.htm">Home</a>><a href="verbs1flash.htm">Beginner Verbs 1: Flash Cards</a></li>
 
   </ol>
 </nav>
@@ -310,6 +309,37 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+        /* Breadcrumb styles */
+.breadcrumb {
+  display: flex;
+  list-style: none;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  background-color: #f0f7f7;
+  border-radius: 8px;
+  padding: 10px 15px;
+}
+
+.breadcrumb li {
+  display: inline;
+  font-size: 0.9rem;
+  color: #5b7b8b;
+}
+
+.breadcrumb li+li:before {
+  padding: 8px;
+  color: #5ba3a3;
+  content: ">";
+}
+
+.breadcrumb li a {
+  color: #3e7f80;
+  text-decoration: none;
+}
+
+.breadcrumb li a:hover {
+  text-decoration: underline;
+}
     </style>
 </head>
 <body>
