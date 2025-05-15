@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Verb Memory Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+        
+        /* Define color variables */
+        :root {
+            /* Homepage colors */
+            --home-primary: #3e7f80;
+            --home-secondary: #5ba3a3;
+            --home-bg: #e6f4f1;
+            
+            /* Beginner colors */
+            --beginner-primary: #b07d28;
+            --beginner-secondary: #d9a440;
+            --beginner-bg: #faf6e9;
+            --beginner-accent: #ecd5a9;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--beginner-bg);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 100 100"><path fill="%23d9cfc1" fill-opacity="0.2" d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z"></path></svg>');
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: rgba(255, 253, 247, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(176, 125, 40, 0.15);
+            border: 1px solid var(--beginner-accent);
+        }
+        
+        /* Breadcrumb styles */
+        .breadcrumb {
+            display: flex;
+            list-style: none;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            background-color: #f0ebd9;
+            border-radius: 8px;
+            width: 100%;
+        }
+        
+        .breadcrumb li {
+            display: inline;
+            font-size: 0.9rem;
+            color: #5b7b8b;
+        }
+        
+        .breadcrumb li+li:before {
+            padding: 8px;
+            color: var(--beginner-secondary);
+            content: ">";
+        }
+        
+        .breadcrumb li a {
+            color: var(--beginner-primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb li a:hover {
+            text-decoration: underline;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            font-family: 'Noto Serif JP', serif;
+            color: var(--beginner-primary);
+            margin-bottom: 10px;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--beginner-secondary), transparent);
+        }
+        
+        header::before,
+        header::after {
+            content: '〜';
+            display: inline-block;
+            color: var(--beginner-secondary);
+            position: absolute;
+            top: 10px;
+        }
+        
+        header::before {
+            left: 20px;
+        }
+        
+        header::after {
+            right: 20px;
+        }
+        
+        .game-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--beginner-primary);
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+        
+        .difficulty-btn {
+            padding: 8px 16px;
+            background-color: #f0ebd9;
+            color: var(--beginner-primary);
+            border: 1px solid var(--beginner-accent);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Noto Sans JP', sans-serif;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .difficulty-btn:hover {
+            background-color: #e5dac9;
+        }
+        
+        .difficulty-btn.active {
+            background-color: var(--beginner-secondary);
+            color: #fff;
+            border-color: var(--beginner-primary);
+        }
+        
+        .reset-btn {
+            padding: 8px 16px;
+            background-color: var(--beginner-primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Noto Sans JP', sans-serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .reset-btn:hover {
+            background-color: #95692b;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            aspect-ratio: 3/4;
+            position: relative;
+            perspective: 1000px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            overflow: hidden;
+        }
+        
+        .card-back {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23e7dac9"/><path d="M0,100 L200,100 M100,0 L100,200" stroke="%23d1c3b0" stroke-width="2"/><path d="M2,2 L198,198 M198,2 L2,198" stroke="%23d1c3b0" stroke-width="1"/><circle cx="100" cy="100" r="50" fill="none" stroke="%23b07d28" stroke-width="1"/><circle cx="100" cy="100" r="70" fill="none" stroke="%23b07d28" stroke-width="1"/><path d="M30,30 Q50,10 70,30 T110,30 T150,30 T190,30" stroke="%23b07d28" fill="none" stroke-width="1"/><path d="M30,170 Q50,190 70,170 T110,170 T150,170 T190,170" stroke="%23b07d28" fill="none" stroke-width="1"/></svg>');
+            background-size: cover;
+            background-position: center;
+            border: 3px solid var(--beginner-secondary);
+        }
+        
+        .card-back::before {
+            content: '言葉';
+            font-family: 'Noto Serif JP', serif;
+            color: var(--beginner-primary);
+            font-size: 1.5rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .card-front {
+            background-color: #fffcf7;
+            transform: rotateY(180deg);
+            border: 3px solid var(--beginner-secondary);
+            text-align: center;
+        }
+        
+        /* Japanese verb card styles */
+        .card-front.japanese {
+            background-color: #f5efe2;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M20,40 Q30,35 40,40 T60,40 T80,40" stroke="%23d9bb8d" fill="none" stroke-width="1" opacity="0.6"/><path d="M25,70 Q35,75 45,70 T65,70" stroke="%23d9bb8d" fill="none" stroke-width="1" opacity="0.6"/><path d="M10,10 L15,30 M85,10 L80,30" stroke="%23d9bb8d" stroke-width="1" opacity="0.4"/><circle cx="20" cy="20" r="5" fill="%23d9bb8d" opacity="0.2"/><circle cx="80" cy="20" r="5" fill="%23d9bb8d" opacity="0.2"/><circle cx="50" cy="90" r="3" fill="%23d9bb8d" opacity="0.2"/></svg>');
+            background-size: 100px 100px;
+            background-repeat: no-repeat;
+            background-position: center bottom;
+        }
+        
+        /* English meaning card styles */
+        .card-front.english {
+            background-color: #f3ede1;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M40,20 Q50,15 60,20" stroke="%23d9a440" fill="none" stroke-width="1" opacity="0.4"/><path d="M30,80 Q50,85 70,80" stroke="%23d9a440" fill="none" stroke-width="1" opacity="0.4"/><path d="M20,30 Q25,50 20,70 M80,30 Q75,50 80,70" stroke="%23d9a440" stroke-width="1" opacity="0.3"/></svg>');
+            background-size: 100px 100px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        
+        .japanese-text {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 1.8rem;
+            color: var(--beginner-primary);
+            margin-bottom: 8px;
+        }
+        
+        .romaji {
+            font-size: 0.9rem;
+            color: var(--beginner-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .english-text {
+            font-size: 1.2rem;
+            color: var(--beginner-primary);
+        }
+        
+        .game-footer {
+            margin-top: 20px;
+            background-color: #f0ebd9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--beginner-accent);
+        }
+        
+        .game-footer h2 {
+            font-family: 'Noto Serif JP', serif;
+            color: var(--beginner-primary);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .game-footer ul {
+            padding-left: 20px;
+            color: #5a4224;
+        }
+        
+        .game-footer li {
+            margin-bottom: 5px;
+        }
+        
+        .congratulations {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8eccd;
+            border-radius: 8px;
+            border: 1px solid var(--beginner-accent);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(184, 137, 77, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(184, 137, 77, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(184, 137, 77, 0); }
+        }
+        
+        .congratulations h2 {
+            color: var(--beginner-primary);
+            font-family: 'Noto Serif JP', serif;
+            margin-bottom: 10px;
+        }
+        
+        .congratulations p {
+            color: #5a4224;
+        }
+        
+        @media (max-width: 768px) {
+            .game-board {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .japanese-text {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb navigation -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li><a href="index.htm">Home</a></li>
+                <li>Beginner Verbs 1: Memory Game</li>
+            </ol>
+        </nav>
+        
+        <header>
+            <h1>日本語 動詞 Memory Game</h1>
+        </header>
+        
+        <div class="game-info" id="gameInfo">
+            <p>Match the Japanese verbs with their English meanings!</p>
+            <p>Attempts: <span id="attempts">0</span></p>
+        </div>
+        
+        <div class="controls">
+            <button class="difficulty-btn active" data-difficulty="easy">Easy (6 pairs)</button>
+            <button class="difficulty-btn" data-difficulty="medium">Medium (8 pairs)</button>
+            <button class="difficulty-btn" data-difficulty="hard">Hard (12 pairs)</button>
+            <button class="reset-btn" id="resetBtn">Reset Game</button>
+        </div>
+        
+        <div class="game-board" id="gameBoard">
+            <!-- Cards will be generated by JavaScript -->
+        </div>
+        
+        <div id="congratsMessage" style="display: none;" class="congratulations">
+            <h2>おめでとう！ Congratulations!</h2>
+            <p>You completed the game in <span id="finalAttempts">0</span> attempts!</p>
+            <button class="reset-btn" id="playAgainBtn">Play Again</button>
+        </div>
+        
+        <div class="game-footer">
+            <h2>How to Play:</h2>
+            <ul>
+                <li>Click on cards to flip them over</li>
+                <li>Match the Japanese verbs with their English meanings</li>
+                <li>Try to complete the game in as few attempts as possible</li>
+                <li>Use the different difficulty levels to challenge yourself</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Card data
+        const verbPairs = {
+            easy: [
+                { japanese: 'いきます', romaji: 'ikimasu', english: 'to go' },
+                { japanese: 'きます', romaji: 'kimasu', english: 'to come' },
+                { japanese: 'たべます', romaji: 'tabemasu', english: 'to eat' },
+                { japanese: 'のみます', romaji: 'nomimasu', english: 'to drink' },
+                { japanese: 'みます', romaji: 'mimasu', english: 'to see' },
+                { japanese: 'ねます', romaji: 'nemasu', english: 'to sleep' },
+            ],
+            medium: [
+                { japanese: 'いきます', romaji: 'ikimasu', english: 'to go' },
+                { japanese: 'きます', romaji: 'kimasu', english: 'to come' },
+                { japanese: 'たべます', romaji: 'tabemasu', english: 'to eat' },
+                { japanese: 'のみます', romaji: 'nomimasu', english: 'to drink' },
+                { japanese: 'みます', romaji: 'mimasu', english: 'to see' },
+                { japanese: 'ききます', romaji: 'kikimasu', english: 'to hear' },
+                { japanese: 'はなします', romaji: 'hanashimasu', english: 'to speak' },
+                { japanese: 'よみます', romaji: 'yomimasu', english: 'to read' },
+            ],
+            hard: [
+                { japanese: 'いきます', romaji: 'ikimasu', english: 'to go' },
+                { japanese: 'きます', romaji: 'kimasu', english: 'to come' },
+                { japanese: 'たべます', romaji: 'tabemasu', english: 'to eat' },
+                { japanese: 'のみます', romaji: 'nomimasu', english: 'to drink' },
+                { japanese: 'みます', romaji: 'mimasu', english: 'to see' },
+                { japanese: 'ききます', romaji: 'kikimasu', english: 'to hear' },
+                { japanese: 'はなします', romaji: 'hanashimasu', english: 'to speak' },
+                { japanese: 'よみます', romaji: 'yomimasu', english: 'to read' },
+                { japanese: 'かきます', romaji: 'kakimasu', english: 'to write' },
+                { japanese: 'ねます', romaji: 'nemasu', english: 'to sleep' },
+                { japanese: 'おきます', romaji: 'okimasu', english: 'to wake up' },
+                { japanese: 'あるきます', romaji: 'arukimasu', english: 'to walk' },
+            ]
+        };
+        
+        // Game variables
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = [];
+        let attempts = 0;
+        let currentDifficulty = 'easy';
+        let isProcessing = false;
+        
+        // DOM elements
+        const gameBoard = document.getElementById('gameBoard');
+        const attemptsCounter = document.getElementById('attempts');
+        const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+        const resetButton = document.getElementById('resetBtn');
+        const congratsMessage = document.getElementById('congratsMessage');
+        const finalAttemptsSpan = document.getElementById('finalAttempts');
+        const playAgainButton = document.getElementById('playAgainBtn');
+        const gameInfo = document.getElementById('gameInfo');
+        
+        // Initialize game
+        initGame(currentDifficulty);
+        
+        // Event listeners
+        difficultyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (button.classList.contains('active')) return;
+                
+                difficultyButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                currentDifficulty = button.getAttribute('data-difficulty');
+                initGame(currentDifficulty);
+            });
+        });
+        
+        resetButton.addEventListener('click', () => {
+            initGame(currentDifficulty);
+        });
+        
+        playAgainButton.addEventListener('click', () => {
+            congratsMessage.style.display = 'none';
+            gameInfo.style.display = 'block';
+            initGame(currentDifficulty);
+        });
+        
+        // Game functions
+        function initGame(difficulty) {
+            // Reset game state
+            cards = [];
+            flippedCards = [];
+            matchedPairs = [];
+            attempts = 0;
+            attemptsCounter.textContent = attempts;
+            
+            // Clear game board
+            gameBoard.innerHTML = '';
+            
+            // Hide congratulations message
+            congratsMessage.style.display = 'none';
+            
+            // Create card pairs
+            const selectedPairs = verbPairs[difficulty];
+            let cardData = [];
+            
+            selectedPairs.forEach((pair, index) => {
+                // Japanese card
+                cardData.push({
+                    id: index * 2,
+                    pairId: index,
+                    type: 'japanese',
+                    japanese: pair.japanese,
+                    romaji: pair.romaji,
+                    english: null
+                });
+                
+                // English card
+                cardData.push({
+                    id: index * 2 + 1,
+                    pairId: index,
+                    type: 'english',
+                    japanese: null,
+                    romaji: null,
+                    english: pair.english
+                });
+            });
+            
+            // Shuffle cards
+            cards = shuffleArray(cardData);
+            
+            // Create card elements
+            cards.forEach(card => {
+                const cardElement = createCardElement(card);
+                gameBoard.appendChild(cardElement);
+            });
+            
+            // Adjust grid columns based on difficulty
+            if (difficulty === 'easy') {
+                gameBoard.style.gridTemplateColumns = 'repeat(4, 1fr)';
+            } else if (difficulty === 'medium') {
+                gameBoard.style.gridTemplateColumns = 'repeat(4, 1fr)';
+            } else {
+                // hard
+                const isWideScreen = window.innerWidth > 768;
+                gameBoard.style.gridTemplateColumns = isWideScreen ? 'repeat(6, 1fr)' : 'repeat(4, 1fr)';
+            }
+        }
+        
+        function createCardElement(card) {
+            const cardElement = document.createElement('div');
+            cardElement.className = 'card';
+            cardElement.setAttribute('data-id', card.id);
+            cardElement.setAttribute('data-pair-id', card.pairId);
+            
+            const cardInner = document.createElement('div');
+            cardInner.className = 'card-inner';
+            
+            // Card back (same for all cards)
+            const cardBack = document.createElement('div');
+            cardBack.className = 'card-face card-back';
+            
+            // Card front (different for Japanese and English)
+            const cardFront = document.createElement('div');
+            cardFront.className = `card-face card-front ${card.type}`;
+            
+            if (card.type === 'japanese') {
+                const japaneseText = document.createElement('div');
+                japaneseText.className = 'japanese-text';
+                japaneseText.textContent = card.japanese;
+                
+                const romajiText = document.createElement('div');
+                romajiText.className = 'romaji';
+                romajiText.textContent = card.romaji;
+                
+                cardFront.appendChild(japaneseText);
+                cardFront.appendChild(romajiText);
+            } else {
+                const englishText = document.createElement('div');
+                englishText.className = 'english-text';
+                englishText.textContent = card.english;
+                
+                cardFront.appendChild(englishText);
+            }
+            
+            cardInner.appendChild(cardBack);
+            cardInner.appendChild(cardFront);
+            cardElement.appendChild(cardInner);
+            
+            // Add click event listener
+            cardElement.addEventListener('click', () => handleCardClick(cardElement, card));
+            
+            return cardElement;
+        }
+        
+        function handleCardClick(cardElement, card) {
+            // Prevent clicking if already processing or card is flipped or matched
+            if (isProcessing || flippedCards.includes(card.id) || matchedPairs.includes(card.pairId)) {
+                return;
+            }
+            
+            // Prevent clicking more than 2 cards
+            if (flippedCards.length === 2) {
+                return;
+            }
+            
+            // Flip the card
+            cardElement.classList.add('flipped');
+            flippedCards.push(card.id);
+            
+            // Check for match if two cards flipped
+            if (flippedCards.length === 2) {
+                attempts++;
+                attemptsCounter.textContent = attempts;
+                
+                const card1 = cards.find(c => c.id === flippedCards[0]);
+                const card2 = cards.find(c => c.id === flippedCards[1]);
+                
+                if (card1.pairId === card2.pairId) {
+                    // Match found
+                    matchedPairs.push(card1.pairId);
+                    flippedCards = [];
+                    
+                    // Check if game completed
+                    if (matchedPairs.length === verbPairs[currentDifficulty].length) {
+                        setTimeout(() => {
+                            finalAttemptsSpan.textContent = attempts;
+                            congratsMessage.style.display = 'block';
+                            gameInfo.style.display = 'none';
+                        }, 500);
+                    }
+                } else {
+                    // No match
+                    isProcessing = true;
+                    setTimeout(() => {
+                        document.querySelectorAll(`.card[data-id="${flippedCards[0]}"], .card[data-id="${flippedCards[1]}"]`).forEach(card => {
+                            card.classList.remove('flipped');
+                        });
+                        flippedCards = [];
+                        isProcessing = false;
+                    }, 1200);
+                }
+            }
+        }
+        
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+    </script>
+</body>
+</html>
