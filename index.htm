@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<!-- saved from url=(0093)file:///Users/bronwenlogan/Library/CloudStorage/Dropbox/Mac%20(2)/Downloads/landing-page.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Japanese</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #e6f4f1;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><path fill="%23c8e6e2" fill-opacity="0.4" d="M20,20 Q60,10 100,50 T180,80 T270,60 T350,80 T380,20" stroke="none"/><path fill="%23c8d9e6" fill-opacity="0.3" d="M20,350 Q100,380 160,340 T250,330 T350,380" stroke="none"/><path fill="%23ffffff" fill-opacity="0.6" d="M60,200 Q140,240 200,180 T300,220" stroke="none"/></svg>');
+            background-attachment: fixed;
+            background-size: cover;
+            padding: 30px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 2px solid #c8d9e6;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><path d="M50,50 Q70,20 100,30 T150,50 T200,30 T250,50" stroke="%23cee8e3" fill="none" stroke-width="3" opacity="0.2"/><path d="M50,250 Q100,270 150,250 T250,270" stroke="%23cee8e3" fill="none" stroke-width="3" opacity="0.2"/></svg>');
+            background-size: 300px 300px;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        h1 {
+            font-family: 'Noto Serif JP', serif;
+            color: #3e7f80;
+            margin-bottom: 15px;
+            font-size: 2.8rem;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #5b7b8b;
+            font-size: 1.3rem;
+            font-weight: normal;
+        }
+        
+        .levels-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .level {
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid #c8e6e2;
+            background-color: #f8fdfd;
+        }
+        
+        .level-header {
+            background-color: #5ba3a3;
+            padding: 15px 25px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.3s;
+        }
+        
+        .level-header:hover {
+            background-color: #4a9292;
+        }
+        
+        .level-header h2 {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .level-header .toggle-icon {
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        
+        .level-header.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+        
+        .level-content {
+            display: none;
+            padding: 25px;
+        }
+        
+        .level-content.active {
+            display: block;
+        }
+        
+        .level-description {
+            color: #5b7b8b;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .activities {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .activity-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .activity-image {
+            height: 150px;
+            position: relative;
+            overflow: hidden;
+            background-color: #e8f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .flashcard-icon {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect x="50" y="30" width="100" height="140" rx="10" fill="%23ffffff" stroke="%235ba3a3" stroke-width="3"/><text x="100" y="100" font-family="sans-serif" font-size="40" text-anchor="middle" fill="%235ba3a3">あ</text><text x="100" y="140" font-family="sans-serif" font-size="18" text-anchor="middle" fill="%235ba3a3">a</text></svg>');
+            background-size: 100px;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .memorygame-icon {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect x="30" y="50" width="60" height="80" rx="8" fill="%2367a4a4" stroke="%23ffffff" stroke-width="2"/><rect x="110" y="50" width="60" height="80" rx="8" fill="%23ffffff" stroke="%2367a4a4" stroke-width="2"/><circle cx="60" cy="90" r="20" fill="%23ffffff" stroke="%235ba3a3" stroke-width="2"/><circle cx="55" cy="85" r="3" fill="%235ba3a3"/><circle cx="65" cy="85" r="3" fill="%235ba3a3"/><path d="M55,92 Q60,98 65,92" stroke="%235ba3a3" fill="none" stroke-width="2"/><text x="140" y="90" font-family="sans-serif" font-size="16" text-anchor="middle" fill="%235ba3a3">to go</text></svg>');
+            background-size: 120px;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .activity-details {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .activity-title {
+            color: #3e7f80;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .activity-description {
+            color: #5b7b8b;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        
+        .activity-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #5ba3a3;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            text-align: center;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-top: auto;
+        }
+        
+        .activity-link:hover {
+            background-color: #4a9292;
+        }
+        
+        .coming-soon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f5f5;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px dashed #c8e6e2;
+            text-align: center;
+        }
+        
+        .coming-soon h3 {
+            color: #5b7b8b;
+            margin-bottom: 10px;
+        }
+        
+        .coming-soon p {
+            color: #7a8e9a;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #5b7b8b;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Decorative elements */
+        .decorations {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .spirit {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="%23ffffff" stroke="%235ba3a3" stroke-width="2"/><circle cx="15" cy="17" r="2" fill="%235ba3a3"/><circle cx="25" cy="17" r="2" fill="%235ba3a3"/><path d="M15,24 Q20,28 25,24" stroke="%235ba3a3" fill="none" stroke-width="2"/></svg>');
+            background-repeat: no-repeat;
+            opacity: 0.5;
+        }
+        
+        .spirit-1 {
+            top: 30px;
+            right: 40px;
+            animation: float 4s infinite alternate;
+        }
+        
+        .spirit-2 {
+            bottom: 40px;
+            left: 30px;
+            animation: float 3s infinite alternate-reverse;
+        }
+        
+        .spirit-3 {
+            top: 50%;
+            right: 50px;
+            animation: float 5s infinite alternate;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-15px); }
+        }
+        
+        @media (max-width: 768px) {
+            .activities {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="decorations">
+            <div class="spirit spirit-1"></div>
+            <div class="spirit spirit-2"></div>
+            <div class="spirit spirit-3"></div>
+        </div>
+        
+        <header>
+            <h1>日本語を学ぶ</h1>
+            <div class="subtitle">Learning Japanese</div>
+        </header>
+        
+        <div class="levels-container">
+            <!-- Beginner Level -->
+            <div class="level">
+                <div class="level-header active" onclick="toggleLevel(this)">
+                    <h2>Beginner</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="level-content active">
+                    <p class="level-description">Start your Japanese learning journey with these beginner-friendly activities. Perfect for those who are just getting started with basic vocabulary and grammar.</p>
+                    
+                    <div class="activities">
+                        <!-- Flashcards Activity -->
+                        <div class="activity-card">
+                            <div class="activity-image">
+                                <div class="flashcard-icon"></div>
+                            </div>
+                            <div class="activity-details">
+                                <h3 class="activity-title">Beginner Verbs 1 Flashcards</h3>
+                                <p class="activity-description">Study basic Japanese verbs with interactive flashcards. Features polite form (masu-form) verbs with memory aids and example sentences.</p>
+                                <a href="file:///Users/bronwenlogan/Library/CloudStorage/Dropbox/Mac%20(2)/Downloads/japanese-verb-flashcards.html" class="activity-link">Study Flashcards</a>
+                            </div>
+                        </div>
+                        
+                        <!-- Memory Game Activity -->
+                        <div class="activity-card">
+                            <div class="activity-image">
+                                <div class="memorygame-icon"></div>
+                            </div>
+                            <div class="activity-details">
+                                <h3 class="activity-title">Beginner Verbs 1 Memory Game</h3>
+                                <p class="activity-description">Match Japanese verbs with their English meanings in this Ghibli-inspired memory game. A fun way to reinforce your vocabulary!</p>
+                                <a href="file:///Users/bronwenlogan/Library/CloudStorage/Dropbox/Mac%20(2)/Downloads/ghibli-memory-game.html" class="activity-link">Play Memory Game</a>
+                            </div>
+                        </div>
+                        
+                        <!-- Coming Soon Card -->
+                        <div class="coming-soon">
+                            <h3>More Activities Coming Soon!</h3>
+                            <p>Check back later for more beginner Japanese learning resources.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Intermediate Level -->
+            <div class="level">
+                <div class="level-header" onclick="toggleLevel(this)">
+                    <h2>Intermediate</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="level-content">
+                    <p class="level-description">Ready for the next step? These intermediate activities will help you expand your vocabulary and master more complex grammatical structures.</p>
+                    
+                    <div class="coming-soon">
+                        <h3>Intermediate Activities Coming Soon!</h3>
+                        <p>We're working on adding intermediate-level resources. Please check back later.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Advanced Level -->
+            <div class="level">
+                <div class="level-header" onclick="toggleLevel(this)">
+                    <h2>Advanced</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="level-content">
+                    <p class="level-description">For learners looking to achieve fluency, these advanced activities will help you master nuanced expressions and complex language usage.</p>
+                    
+                    <div class="coming-soon">
+                        <h3>Advanced Activities Coming Soon!</h3>
+                        <p>Advanced learning materials are under development. Please check back later.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Created for Japanese language learning</p>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleLevel(header) {
+            // Toggle active class on the header
+            header.classList.toggle('active');
+            
+            // Toggle active class on the content
+            const content = header.nextElementSibling;
+            content.classList.toggle('active');
+        }
+        
+        // Initialize with Beginner section open
+        document.addEventListener('DOMContentLoaded', function() {
+            const beginnerHeader = document.querySelector('.level-header');
+            const beginnerContent = document.querySelector('.level-content');
+            
+            beginnerHeader.classList.add('active');
+            beginnerContent.classList.add('active');
+        });
+    </script>
+
+</body></html>
