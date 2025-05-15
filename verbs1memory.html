@@ -11,6 +11,55 @@
   </ol>
 </nav>
     <style>
+    
+    /* Define color variables - ADD THIS FIRST */
+    :root {
+      /* Homepage colors */
+      --home-primary: #3e7f80;
+      --home-secondary: #5ba3a3;
+      --home-bg: #e6f4f1;
+      
+      /* Beginner colors */
+      --beginner-primary: #b07d28;
+      --beginner-secondary: #d9a440;
+      --beginner-bg: #faf6e9;
+      --beginner-accent: #ecd5a9;
+    }
+    <style>
+  /* Color variables from above would be here first */
+  
+  /* ADD THESE SECTION STYLES HERE */
+  /* Homepage specific styles */
+  .home-section {
+    background-color: var(--home-bg);
+  }
+
+  .home-section h1,
+  .home-section h2 {
+    color: var(--home-primary);
+  }
+
+  .home-section .button,
+  .home-section .nav-item.active {
+    background-color: var(--home-secondary);
+  }
+
+  /* Beginner specific styles */
+  .beginner-section {
+    background-color: var(--beginner-bg);
+  }
+
+  .beginner-section h1,
+  .beginner-section h2 {
+    color: var(--beginner-primary);
+  }
+
+  .beginner-section .button,
+  .beginner-section .nav-item.active {
+    background-color: var(--beginner-secondary);
+  }
+
+   
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&display=swap');
         
         * {
