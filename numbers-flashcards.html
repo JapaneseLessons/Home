@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Numbers Flashcards</title>
+    <style>
+        /* Define color variables */
+        :root {
+            /* Homepage colors */
+            --home-primary: #3e7f80;
+            --home-secondary: #5ba3a3;
+            --home-bg: #e6f4f1;
+            
+            /* Beginner colors */
+            --beginner-primary: #b07d28;
+            --beginner-secondary: #d9a440;
+            --beginner-bg: #faf6e9;
+            --beginner-accent: #ecd5a9;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: var(--beginner-bg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(176, 125, 40, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Breadcrumb styles */
+        .breadcrumb {
+            display: flex;
+            list-style: none;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            background-color: #f0ebd9;
+            border-radius: 8px;
+            width: 100%;
+        }
+        
+        .breadcrumb li {
+            display: inline;
+            font-size: 0.9rem;
+            color: #5b7b8b;
+        }
+        
+        .breadcrumb li+li:before {
+            padding: 8px;
+            color: var(--beginner-secondary);
+            content: ">";
+        }
+        
+        .breadcrumb li a {
+            color: var(--beginner-primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb li a:hover {
+            text-decoration: underline;
+        }
+        
+        h1 {
+            font-size: 28px;
+            color: var(--beginner-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .checkbox-control {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-control input {
+            margin-right: 5px;
+        }
+        
+        .checkbox-control label {
+            font-size: 14px;
+        }
+        
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .category-btn {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            background-color: #e0e0e0;
+        }
+        
+        .category-btn.active {
+            background-color: var(--beginner-secondary);
+            color: white;
+        }
+        
+        .card-counter {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .flashcard-container {
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .card-front {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-back {
+            background-color: #f0ebd9;
+            transform: rotateY(180deg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .japanese {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--beginner-primary);
+            margin-bottom: 10px;
+        }
+        
+        .romaji {
+            font-size: 24px;
+            color: var(--beginner-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .pronunciation {
+            font-size: 18px;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 15px;
+        }
+        
+        .memory-aid {
+            text-align: center;
+            font-size: 14px;
+            color: var(--beginner-secondary);
+            margin-top: 16px;
+            margin-bottom: 12px;
+            max-width: 300px;
+        }
+        
+        .memory-aid-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .english {
+            font-size: 30px;
+            font-weight: bold;
+            color: var(--beginner-primary);
+            margin-bottom: 16px;
+        }
+        
+        .example {
+            font-size: 18px;
+            color: var(--beginner-secondary);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        
+        .example-romaji {
+            font-size: 16px;
+            color: var(--beginner-secondary);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        
+        .example-english {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .flip-instruction {
+            font-size: 12px;
+            color: #999;
+            margin-top: 15px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background-color: var(--beginner-secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .nav-btn:hover {
+            background-color: var(--beginner-primary);
+        }
+        
+        .instructions {
+            background-color: white;
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid var(--beginner-accent);
+        }
+        
+        .instructions h2 {
+            font-size: 18px;
+            color: var(--beginner-primary);
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .japanese {
+                font-size: 36px;
+            }
+            
+            .romaji {
+                font-size: 20px;
+            }
+            
+            .english {
+                font-size: 24px;
+            }
+            
+            .flashcard-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb navigation -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li><a href="index.htm">Home</a></li>
+                <li>Beginner Numbers: Flashcards</li>
+            </ol>
+        </nav>
+        
+        <h1>Japanese Numbers Flashcards</h1>
+        
+        <div class="controls">
+            <div class="checkbox-control">
+                <input type="checkbox" id="showRomaji" checked>
+                <label for="showRomaji">Show Romaji</label>
+            </div>
+            
+            <div class="checkbox-control">
+                <input type="checkbox" id="showPronunciation" checked>
+                <label for="showPronunciation">Show Pronunciation</label>
+            </div>
+            
+            <div class="checkbox-control">
+                <input type="checkbox" id="shuffleCards">
+                <label for="shuffleCards">Shuffle Cards</label>
+            </div>
+        </div>
+        
+        <div class="categories" id="categories">
+            <!-- Categories will be added here by JavaScript -->
+        </div>
+        
+        <div class="card-counter" id="cardCounter">
+            Card 1 of 20
+        </div>
+        
+        <div class="flashcard-container" id="flashcardContainer">
+            <div class="flashcard" id="flashcard">
+                <div class="card-face card-front" id="cardFront">
+                    <div class="japanese" id="japanese">一</div>
+                    <div class="romaji" id="romaji">ichi</div>
+                    <div class="pronunciation" id="pronunciation">"ee-chee"</div>
+                    <div class="memory-aid">
+                        <div class="memory-aid-title">Memory Aid:</div>
+                        <div id="memoryAid">Think: "itchy" - You have one itchy spot</div>
+                    </div>
+                    <div class="flip-instruction">Click to flip</div>
+                </div>
+                
+                <div class="card-face card-back">
+                    <div class="english" id="english">one</div>
+                    <div class="example" id="example">一つください。</div>
+                    <div class="example-romaji" id="exampleRomaji">Hitotsu kudasai.</div>
+                    <div class="example-english" id="exampleEnglish">One please.</div>
+                    <div class="flip-instruction">Click to flip</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn">Previous</button>
+            <button class="nav-btn" id="nextBtn">Next</button>
+        </div>
+        
+        <div class="instructions">
+            <h2>How to Use:</h2>
+            <ul>
+                <li>Click on the card to flip between Japanese and English</li>
+                <li>Use the Previous/Next buttons to navigate through cards</li>
+                <li>Toggle options to show/hide romaji and pronunciation</li>
+                <li>Select a category to focus on specific types of numbers</li>
+                <li>Enable shuffle for randomized practice</li>
+                <li>Use the memory aids to help remember connections between words</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const allCards = [
+            {
+                japanese: '一',
+                romaji: 'ichi',
+                english: 'one',
+                pronunciation: 'ee-chee',
+                example: '一つください。',
+                exampleRomaji: 'Hitotsu kudasai.',
+                exampleEnglish: 'One please.',
+                category: 'basic',
+                memoryAid: 'Think: "itchy" - You have one itchy spot'
+            },
+            {
+                japanese: '二',
+                romaji: 'ni',
+                english: 'two',
+                pronunciation: 'nee',
+                example: '二人の友達',
+                exampleRomaji: 'Futari no tomodachi',
+                exampleEnglish: 'Two friends',
+                category: 'basic',
+                memoryAid: 'Think: "knee" - You have two knees'
+            },
+            {
+                japanese: '三',
+                romaji: 'san',
+                english: 'three',
+                pronunciation: 'sahn',
+                example: '三回やりました',
+                exampleRomaji: 'Sankai yarimashita',
+                exampleEnglish: 'I did it three times',
+                category: 'basic',
+                memoryAid: 'Think of "sun" - The sun is a 3-letter word'
+            },
+            {
+                japanese: '四',
+                romaji: 'shi/yon',
+                english: 'four',
+                pronunciation: 'shee/yohn',
+                example: '四つの季節',
+                exampleRomaji: 'Yottsu no kisetsu',
+                exampleEnglish: 'Four seasons',
+                category: 'basic',
+                memoryAid: 'Think: "she" - "She" has four limbs'
+            },
+            {
+                japanese: '五',
+                romaji: 'go',
+                english: 'five',
+                pronunciation: 'goh',
+                example: '五分後に',
+                exampleRomaji: 'Gofun go ni',
+                exampleEnglish: 'In five minutes',
+                category: 'basic',
+                memoryAid: 'Think: "go" - We have five fingers, ready to go!'
+            },
+            {
+                japanese: '六',
+                romaji: 'roku',
+                english: 'six',
+                pronunciation: 'roh-koo',
+                example: '六時に起きます',
+                exampleRomaji: 'Rokuji ni okimasu',
+                exampleEnglish: 'I wake up at six o\'clock',
+                category: 'basic',
+                memoryAid: 'Think: "rock" - The six-sided die is a rock-like cube'
+            },
+            {
+                japanese: '七',
+                romaji: 'shichi/nana',
+                english: 'seven',
+                pronunciation: 'shee-chee/nah-nah',
+                example: '七日間',
+                exampleRomaji: 'Nanakakan',
+                exampleEnglish: 'Seven days',
+                category: 'basic',
+                memoryAid: 'Think: "she-chee" - sounds like "itchy", seven is a lucky (itchy) number'
+            },
+            {
+                japanese: '八',
+                romaji: 'hachi',
+                english: 'eight',
+                pronunciation: 'hah-chee',
+                example: '八時にミーティング',
+                exampleRomaji: 'Hachiji ni mītingu',
+                exampleEnglish: 'Meeting at eight o\'clock',
+                category: 'basic',
+                memoryAid: 'Think: "hatching" - An octopus (8 legs) hatching from an egg'
+            },
+            {
+                japanese: '九',
+                romaji: 'kyuu/ku',
+                english: 'nine',
+                pronunciation: 'kyoo/koo',
+                example: '九歳の子供',
+                exampleRomaji: 'Kyūsai no kodomo',
+                exampleEnglish: 'Nine-year-old child',
+                category: 'basic',
+                memoryAid: 'Think: "Q" - 9 looks like a Q with its tail'
+            },
+            {
+                japanese: '十',
+                romaji: 'juu',
+                english: 'ten',
+                pronunciation: 'joo',
+                example: '十分間',
+                exampleRomaji: 'Juppunkan',
+                exampleEnglish: 'Ten minutes',
+                category: 'basic',
+                memoryAid: 'Think: "Ju" - Sounds like "jewel" - a perfect 10 is a jewel'
+            },
+            {
+                japanese: '百',
+                romaji: 'hyaku',
+                english: 'hundred',
+                pronunciation: 'h-yah-koo',
+                example: '百円',
+                exampleRomaji: 'Hyaku-en',
+                exampleEnglish: '100 yen',
+                category: 'large',
+                memoryAid: 'Think: "high yak coo" - A hundred yaks making high-pitched coos'
+            },
+            {
+                japanese: '千',
+                romaji: 'sen',
+                english: 'thousand',
+                pronunciation: 'sehn',
+                example: '千円札',
+                exampleRomaji: 'Sen-en satsu',
+                exampleEnglish: '1000-yen bill',
+                category: 'large',
+                memoryAid: 'Think: "send" - Send me a thousand dollars!'
+            },
+            {
+                japanese: '万',
+                romaji: 'man',
+                english: 'ten thousand',
+                pronunciation: 'mahn',
+                example: '一万円',
+                exampleRomaji: 'Ichiman-en',
+                exampleEnglish: '10,000 yen',
+                category: 'large',
+                memoryAid: 'Think: "man" - A man with 10,000 fingers would be strange'
+            },
+            {
+                japanese: '零',
+                romaji: 'rei/zero',
+                english: 'zero',
+                pronunciation: 'ray/zee-roh',
+                example: '零度',
+                exampleRomaji: 'Reido',
+                exampleEnglish: 'Zero degrees',
+                category: 'basic',
+                memoryAid: 'Think: "ray" - A ray of light so thin it\'s almost zero width'
+            },
+            {
+                japanese: '半',
+                romaji: 'han',
+                english: 'half',
+                pronunciation: 'hahn',
+                example: '一時半',
+                exampleRomaji: 'Ichiji-han',
+                exampleEnglish: 'Half past one',
+                category: 'fractions',
+                memoryAid: 'Think: "Han" - Han Solo is just half of a duo'
+            },
+            {
+                japanese: '一つ',
+                romaji: 'hitotsu',
+                english: 'one (object)',
+                pronunciation: 'hee-toh-tsoo',
+                example: 'りんごを一つください',
+                exampleRomaji: 'Ringo o hitotsu kudasai',
+                exampleEnglish: 'One apple, please',
+                category: 'counters',
+                memoryAid: 'Think: "he totals" - He totals one object when counting'
+            },
+            {
+                japanese: '二つ',
+                romaji: 'futatsu',
+                english: 'two (objects)',
+                pronunciation: 'foo-tah-tsoo',
+                example: '鉛筆を二つ持っています',
+                exampleRomaji: 'Enpitsu o futatsu motte imasu',
+                exampleEnglish: 'I have two pencils',
+                category: 'counters',
+                memoryAid: 'Think: "foot-at-zoo" - You need two feet at the zoo'
+            },
+            {
+                japanese: '三つ',
+                romaji: 'mittsu',
+                english: 'three (objects)',
+                pronunciation: 'meet-tsoo',
+                example: '三つの選択肢',
+                exampleRomaji: 'Mittsu no sentakushi',
+                exampleEnglish: 'Three choices',
+                category: 'counters',
+                memoryAid: 'Think: "meet-sue" - Meeting three people: me, you, and Sue'
+            },
+            {
+                japanese: '何',
+                romaji: 'nan',
+                english: 'what (number)/how many',
+                pronunciation: 'nahn',
+                example: '何時ですか？',
+                exampleRomaji: 'Nanji desu ka?',
+                exampleEnglish: 'What time is it?',
+                category: 'questions',
+                memoryAid: 'Think: "none" - When you ask "how many?" you have none yet'
+            },
+            {
+                japanese: '時',
+                romaji: 'ji',
+                english: 'o\'clock',
+                pronunciation: 'jee',
+                example: '三時です',
+                exampleRomaji: 'Sanji desu',
+                exampleEnglish: 'It\'s 3 o\'clock',
+                category: 'time',
+                memoryAid: 'Think: "G" - The hour hand makes a "G" shape on a clock'
+            }
+        ];
+        
+        const categories = {
+            'basic': 'Basic Numbers (0-10)',
+            'large': 'Large Numbers',
+            'counters': 'Counters',
+            'fractions': 'Fractions',
+            'time': 'Time-related',
+            'questions': 'Questions',
+            'all': 'All Numbers'
+        };
+        
+        let currentCards = [...allCards];
+        let currentCardIndex = 0;
+        let selectedCategory = 'all';
+        let isShuffled = false;
+        
+        // DOM Elements
+        const categoriesContainer = document.getElementById('categories');
+        const cardCounter = document.getElementById('cardCounter');
+        const flashcard = document.getElementById('flashcard');
+        const japaneseEl = document.getElementById('japanese');
+        const romajiEl = document.getElementById('romaji');
+        const pronunciationEl = document.getElementById('pronunciation');
+        const memoryAidEl = document.getElementById('memoryAid');
+        const englishEl = document.getElementById('english');
+        const exampleEl = document.getElementById('example');
+        const exampleRomajiEl = document.getElementById('exampleRomaji');
+        const exampleEnglishEl = document.getElementById('exampleEnglish');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const showRomajiCheckbox = document.getElementById('showRomaji');
+        const showPronunciationCheckbox = document.getElementById('showPronunciation');
+        const shuffleCardsCheckbox = document.getElementById('shuffleCards');
+        const cardFront = document.getElementById('cardFront');
+        
+        // Initialize categories
+        for (const [key, value] of Object.entries(categories)) {
+            const button = document.createElement('button');
+            button.textContent = value;
+            button.className = `category-btn ${key === selectedCategory ? 'active' : ''}`;
+            button.setAttribute('data-category', key);
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                selectedCategory = key;
+                filterCards();
+            });
+            categoriesContainer.appendChild(button);
+        }
+        
+        // Event Listeners
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('flipped');
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            currentCardIndex = currentCardIndex > 0 ? currentCardIndex - 1 : currentCards.length - 1;
+            updateCard();
+            flashcard.classList.remove('flipped');
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            currentCardIndex = currentCardIndex < currentCards.length - 1 ? currentCardIndex + 1 : 0;
+            updateCard();
+            flashcard.classList.remove('flipped');
+        });
+        
+        showRomajiCheckbox.addEventListener('change', () => {
+            romajiEl.style.display = showRomajiCheckbox.checked ? 'block' : 'none';
+        });
+        
+        showPronunciationCheckbox.addEventListener('change', () => {
+            pronunciationEl.style.display = showPronunciationCheckbox.checked ? 'block' : 'none';
+        });
+        
+        shuffleCardsCheckbox.addEventListener('change', () => {
+            isShuffled = shuffleCardsCheckbox.checked;
+            filterCards();
+        });
+        
+        // Functions
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        function filterCards() {
+            if (selectedCategory === 'all') {
+                currentCards = isShuffled ? shuffleArray([...allCards]) : [...allCards];
+            } else {
+                const filteredCards = allCards.filter(card => card.category === selectedCategory);
+                currentCards = isShuffled ? shuffleArray([...filteredCards]) : [...filteredCards];
+            }
+            
+            currentCardIndex = 0;
+            updateCard();
+            flashcard.classList.remove('flipped');
+        }
+        
+        function updateCard() {
+            const card = currentCards[currentCardIndex];
+            
+            japaneseEl.textContent = card.japanese;
+            romajiEl.textContent = card.romaji;
+            pronunciationEl.textContent = `"${card.pronunciation}"`;
+            memoryAidEl.textContent = card.memoryAid;
+            englishEl.textContent = card.english;
+            exampleEl.textContent = card.example;
+            exampleRomajiEl.textContent = card.exampleRomaji;
+            exampleEnglishEl.textContent = card.exampleEnglish;
+            
+            cardCounter.textContent = `Card ${currentCardIndex + 1} of ${currentCards.length}`;
+        }
+        
+        // Initialize
+        updateCard();
+    </script>
+</body>
+</html>
