@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Colors & Numbers Flashcards</title>
+    <style>
+        /* Define color variables */
+        :root {
+            /* Homepage colors */
+            --home-primary: #3e7f80;
+            --home-secondary: #5ba3a3;
+            --home-bg: #e6f4f1;
+            
+            /* Beginner colors */
+            --beginner-primary: #b07d28;
+            --beginner-secondary: #d9a440;
+            --beginner-bg: #faf6e9;
+            --beginner-accent: #ecd5a9;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: var(--beginner-bg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(176, 125, 40, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Breadcrumb styles */
+        .breadcrumb {
+            display: flex;
+            list-style: none;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            background-color: #f0ebd9;
+            border-radius: 8px;
+            width: 100%;
+        }
+        
+        .breadcrumb li {
+            display: inline;
+            font-size: 0.9rem;
+            color: #5b7b8b;
+        }
+        
+        .breadcrumb li+li:before {
+            padding: 8px;
+            color: var(--beginner-secondary);
+            content: ">";
+        }
+        
+        .breadcrumb li a {
+            color: var(--beginner-primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb li a:hover {
+            text-decoration: underline;
+        }
+        
+        h1 {
+            font-size: 28px;
+            color: var(--beginner-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .checkbox-control {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-control input {
+            margin-right: 5px;
+        }
+        
+        .checkbox-control label {
+            font-size: 14px;
+        }
+        
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .category-btn {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            background-color: #e0e0e0;
+        }
+        
+        .category-btn.active {
+            background-color: var(--beginner-secondary);
+            color: white;
+        }
+        
+        .card-counter {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .flashcard-container {
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .card-front {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-back {
+            background-color: #f0ebd9;
+            transform: rotateY(180deg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .japanese {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--beginner-primary);
+            margin-bottom: 10px;
+        }
+        
+        .romaji {
+            font-size: 24px;
+            color: var(--beginner-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .pronunciation {
+            font-size: 18px;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 15px;
+        }
+        
+        .memory-aid {
+            text-align: center;
+            font-size: 14px;
+            color: var(--beginner-secondary);
+            margin-top: 16px;
+            margin-bottom: 12px;
+            max-width: 300px;
+        }
+        
+        .memory-aid-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .english {
+            font-size: 30px;
+            font-weight: bold;
+            color: var(--beginner-primary);
+            margin-bottom: 16px;
+        }
+        
+        .example {
+            font-size: 18px;
+            color: var(--beginner-secondary);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        
+        .example-romaji {
+            font-size: 16px;
+            color: var(--beginner-secondary);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+        
+        .example-english {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .flip-instruction {
+            font-size: 12px;
+            color: #999;
+            margin-top: 15px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background-color: var(--beginner-secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .nav-btn:hover {
+            background-color: var(--beginner-primary);
+        }
+        
+        .instructions {
+            background-color: white;
+            border-radius: 8px;
+            padding: 16px;
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid var(--beginner-accent);
+        }
+        
+        .instructions h2 {
+            font-size: 18px;
+            color: var(--beginner-primary);
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        .color-sample {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 2px solid var(--beginner-primary);
+        }
+        
+        @media (max-width: 600px) {
+            .japanese {
+                font-size: 36px;
+            }
+            
+            .romaji {
+                font-size: 20px;
+            }
+            
+            .english {
+                font-size: 24px;
+            }
+            
+            .flashcard-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb navigation -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li><a href="index.htm">Home</a></li>
+                <li>Beginner Colors & Numbers: Flashcards</li>
+            </ol>
+        </nav>
+        
+        <h1>Japanese Colors & Numbers Flashcards</h1>
+        
+        <div class="controls">
+            <div class="checkbox-control">
+                <input type="checkbox" id="showRomaji" checked>
+                <label for="showRomaji">Show Romaji</label>
+            </div>
+            
+            <div class="checkbox-control">
+                <input type="checkbox" id="showPronunciation" checked>
+                <label for="showPronunciation">Show Pronunciation</label>
+            </div>
+            
+            <div class="checkbox-control">
+                <input type="checkbox" id="shuffleCards">
+                <label for="shuffleCards">Shuffle Cards</label>
+            </div>
+        </div>
+        
+        <div class="categories" id="categories">
+            <!-- Categories will be added here by JavaScript -->
+        </div>
+        
+        <div class="card-counter" id="cardCounter">
+            Card 1 of 20
+        </div>
+        
+        <div class="flashcard-container" id="flashcardContainer">
+            <div class="flashcard" id="flashcard">
+                <div class="card-face card-front" id="cardFront">
+                    <div class="color-sample" id="colorSample" style="background-color: #ff0000; display: none;"></div>
+                    <div class="japanese" id="japanese">あか</div>
+                    <div class="romaji" id="romaji">aka</div>
+                    <div class="pronunciation" id="pronunciation">"ah-kah"</div>
+                    <div class="memory-aid">
+                        <div class="memory-aid-title">Memory Aid:</div>
+                        <div id="memoryAid">Think: "ah-ka" - "ah, car!" - red sports cars are eye-catching</div>
+                    </div>
+                    <div class="flip-instruction">Click to flip</div>
+                </div>
+                
+                <div class="card-face card-back">
+                    <div class="english" id="english">red</div>
+                    <div class="example" id="example">あかい バラ が好きです。</div>
+                    <div class="example-romaji" id="exampleRomaji">Akai bara ga suki desu.</div>
+                    <div class="example-english" id="exampleEnglish">I like red roses.</div>
+                    <div class="flip-instruction">Click to flip</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn">Previous</button>
+            <button class="nav-btn" id="nextBtn">Next</button>
+        </div>
+        
+        <div class="instructions">
+            <h2>How to Use:</h2>
+            <ul>
+                <li>Click on the card to flip between Japanese and English</li>
+                <li>Use the Previous/Next buttons to navigate through cards</li>
+                <li>Toggle options to show/hide romaji and pronunciation</li>
+                <li>Select a category to focus on colors or numbers</li>
+                <li>Enable shuffle for randomized practice</li>
+                <li>Use the memory aids to help remember connections between words</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const allCards = [
+            // Colors
+            {
+                japanese: 'あか',
+                romaji: 'aka',
+                english: 'red',
+                pronunciation: 'ah-kah',
+                example: 'あかい バラ が好きです。',
+                exampleRomaji: 'Akai bara ga suki desu.',
+                exampleEnglish: 'I like red roses.',
+                category: 'colors',
+                memoryAid: 'Think: "ah-ka" - "ah, car!" - red sports cars are eye-catching',
+                color: '#ff0000'
+            },
+            {
+                japanese: 'あお',
+                romaji: 'ao',
+                english: 'blue',
+                pronunciation: 'ah-oh',
+                example: '空は あお いです。',
+                exampleRomaji: 'Sora wa aoi desu.',
+                exampleEnglish: 'The sky is blue.',
+                category: 'colors',
+                memoryAid: 'Think: "ah-oh" - "ah oh!" you say when you see the blue ocean',
+                color: '#0000ff'
+            },
+            {
+                japanese: 'きいろ',
+                romaji: 'kiiro',
+                english: 'yellow',
+                pronunciation: 'kee-ee-roh',
+                example: 'きいろ の Tシャツを着ています。',
+                exampleRomaji: 'Kiiro no T-shatsu o kite imasu.',
+                exampleEnglish: 'I\'m wearing a yellow T-shirt.',
+                category: 'colors',
+                memoryAid: 'Think: "key-row" - a row of golden keys',
+                color: '#ffff00'
+            },
+            {
+                japanese: 'みどり',
+                romaji: 'midori',
+                english: 'green',
+                pronunciation: 'mee-doh-ree',
+                example: '木の葉は みどり です。',
+                exampleRomaji: 'Ki no ha wa midori desu.',
+                exampleEnglish: 'Tree leaves are green.',
+                category: 'colors',
+                memoryAid: 'Think: "me-door-ee" - me opening the door to see the green garden',
+                color: '#00ff00'
+            },
+            {
+                japanese: 'むらさき',
+                romaji: 'murasaki',
+                english: 'purple',
+                pronunciation: 'moo-rah-sah-kee',
+                example: 'むらさき の花が咲いています。',
+                exampleRomaji: 'Murasaki no hana ga saite imasu.',
+                exampleEnglish: 'Purple flowers are blooming.',
+                category: 'colors',
+                memoryAid: 'Think: "moora-saki" - more sake with a purple tint',
+                color: '#800080'
+            },
+            {
+                japanese: 'ピンク',
+                romaji: 'pinku',
+                english: 'pink',
+                pronunciation: 'pin-koo',
+                example: 'ピンク のドレスを買いました。',
+                exampleRomaji: 'Pinku no doresu o kaimashita.',
+                exampleEnglish: 'I bought a pink dress.',
+                category: 'colors',
+                memoryAid: 'This is a loanword that sounds like "pink" in English',
+                color: '#FFC0CB'
+            },
+            {
+                japanese: 'オレンジ',
+                romaji: 'orenji',
+                english: 'orange',
+                pronunciation: 'oh-ren-jee',
+                example: 'オレンジ の果物が好きです。',
+                exampleRomaji: 'Orenji no kudamono ga suki desu.',
+                exampleEnglish: 'I like orange fruits.',
+                category: 'colors',
+                memoryAid: 'This is a loanword that sounds like "orange" in English',
+                color: '#FFA500'
+            },
+            {
+                japanese: 'しろ',
+                romaji: 'shiro',
+                english: 'white',
+                pronunciation: 'shee-roh',
+                example: '雪は しろ いです。',
+                exampleRomaji: 'Yuki wa shiroi desu.',
+                exampleEnglish: 'Snow is white.',
+                category: 'colors',
+                memoryAid: 'Think: "she-row" - she rows a white boat',
+                color: '#ffffff'
+            },
+            {
+                japanese: 'くろ',
+                romaji: 'kuro',
+                english: 'black',
+                pronunciation: 'koo-roh',
+                example: 'くろ い猫がいます。',
+                exampleRomaji: 'Kuroi neko ga imasu.',
+                exampleEnglish: 'There is a black cat.',
+                category: 'colors',
+                memoryAid: 'Think: "crew-row" - the crew rows in black uniforms',
+                color: '#000000'
+            },
+            {
+                japanese: 'ちゃいろ',
+                romaji: 'chairo',
+                english: 'brown',
+                pronunciation: 'chah-ee-roh',
+                example: 'ちゃいろ の靴を履いています。',
+                exampleRomaji: 'Chairo no kutsu o haite imasu.',
+                exampleEnglish: 'I\'m wearing brown shoes.',
+                category: 'colors',
+                memoryAid: 'Think: "chai-row" - a row of chai tea cups (which are brown)',
+                color: '#A52A2A'
+            },
+            
+            // Numbers
+            {
+                japanese: 'いち',
+                romaji: 'ichi',
+                english: 'one (1)',
+                pronunciation: 'ee-chee',
+                example: 'りんごを いち つください。',
+                exampleRomaji: 'Ringo o hitotsu kudasai.',
+                exampleEnglish: 'One apple, please.',
+                category: 'numbers',
+                memoryAid: 'Think: "itchy" - you have one itchy spot on your arm'
+            },
+            {
+                japanese: 'に',
+                romaji: 'ni',
+                english: 'two (2)',
+                pronunciation: 'nee',
+                example: 'に 人のともだちがいます。',
+                exampleRomaji: 'Futari no tomodachi ga imasu.',
+                exampleEnglish: 'I have two friends.',
+                category: 'numbers',
+                memoryAid: 'Think: "knee" - you have two knees'
+            },
+            {
+                japanese: 'さん',
+                romaji: 'san',
+                english: 'three (3)',
+                pronunciation: 'sahn',
+                example: 'さん 冊の本を読みました。',
+                exampleRomaji: 'San-satsu no hon o yomimashita.',
+                exampleEnglish: 'I read three books.',
+                category: 'numbers',
+                memoryAid: 'Think: "sun" - sunshine has three elements: light, heat, and energy'
+            },
+            {
+                japanese: 'よん/し',
+                romaji: 'yon/shi',
+                english: 'four (4)',
+                pronunciation: 'yohn/shee',
+                example: 'よん 個のりんごがあります。',
+                exampleRomaji: 'Yon-ko no ringo ga arimasu.',
+                exampleEnglish: 'There are four apples.',
+                category: 'numbers',
+                memoryAid: 'Think: "yawn" - you yawn after four hours of sleep'
+            },
+            {
+                japanese: 'ご',
+                romaji: 'go',
+                english: 'five (5)',
+                pronunciation: 'goh',
+                example: 'ご 人で行きましょう。',
+                exampleRomaji: 'Go-nin de ikimashou.',
+                exampleEnglish: 'Let\'s go with five people.',
+                category: 'numbers',
+                memoryAid: 'Think: "go" - when you count to five, you "go"'
+            },
+            {
+                japanese: 'ろく',
+                romaji: 'roku',
+                english: 'six (6)',
+                pronunciation: 'roh-koo',
+                example: 'ろく 時に起きます。',
+                exampleRomaji: 'Roku-ji ni okimasu.',
+                exampleEnglish: 'I wake up at six o\'clock.',
+                category: 'numbers',
+                memoryAid: 'Think: "rock-oo" - a rock splits into six pieces and you say "ooh!"'
+            },
+            {
+                japanese: 'なな/しち',
+                romaji: 'nana/shichi',
+                english: 'seven (7)',
+                pronunciation: 'nah-nah/shee-chee',
+                example: 'なな 日に会いましょう。',
+                exampleRomaji: 'Nana-nichi ni aimashou.',
+                exampleEnglish: 'Let\'s meet on the 7th day.',
+                category: 'numbers',
+                memoryAid: 'Think: "nah-nah" - your grandma (nana) is seven decades old'
+            },
+            {
+                japanese: 'はち',
+                romaji: 'hachi',
+                english: 'eight (8)',
+                pronunciation: 'hah-chee',
+                example: 'はち 時間寝ました。',
+                exampleRomaji: 'Hachi-jikan nemashita.',
+                exampleEnglish: 'I slept for eight hours.',
+                category: 'numbers',
+                memoryAid: 'Think: "ha-chee" - you sneeze (achoo) eight times in a row'
+            },
+            {
+                japanese: 'きゅう/く',
+                romaji: 'kyū/ku',
+                english: 'nine (9)',
+                pronunciation: 'kyoo/koo',
+                example: 'きゅう 時から働いています。',
+                exampleRomaji: 'Kyū-ji kara hataraite imasu.',
+                exampleEnglish: 'I have been working since nine o\'clock.',
+                category: 'numbers',
+                memoryAid: 'Think: "Q" - the letter Q is the 9th letter from the end of the English alphabet'
+            },
+            {
+                japanese: 'じゅう',
+                romaji: 'jū',
+                english: 'ten (10)',
+                pronunciation: 'joo',
+                example: 'じゅう 分後に行きましょう。',
+                exampleRomaji: 'Jū-fun go ni ikimashou.',
+                exampleEnglish: 'Let\'s go in ten minutes.',
+                category: 'numbers',
+                memoryAid: 'Think: "Jew" - the Ten Commandments in Judaism'
+            },
+        ];
+        
+        const categories = {
+            'colors': 'Colors',
+            'numbers': 'Numbers',
+            'all': 'All Words'
+        };
+        
+        let currentCards = [...allCards];
+        let currentCardIndex = 0;
+        let selectedCategory = 'all';
+        let isShuffled = false;
+        
+        // DOM Elements
+        const categoriesContainer = document.getElementById('categories');
+        const cardCounter = document.getElementById('cardCounter');
+        const flashcard = document.getElementById('flashcard');
+        const japaneseEl = document.getElementById('japanese');
+        const romajiEl = document.getElementById('romaji');
+        const pronunciationEl = document.getElementById('pronunciation');
+        const memoryAidEl = document.getElementById('memoryAid');
+        const englishEl = document.getElementById('english');
+        const exampleEl = document.getElementById('example');
+        const exampleRomajiEl = document.getElementById('exampleRomaji');
+        const exampleEnglishEl = document.getElementById('exampleEnglish');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const showRomajiCheckbox = document.getElementById('showRomaji');
+        const showPronunciationCheckbox = document.getElementById('showPronunciation');
+        const shuffleCardsCheckbox = document.getElementById('shuffleCards');
+        const cardFront = document.getElementById('cardFront');
+        const colorSample = document.getElementById('colorSample');
+        
+        // Initialize categories
+        for (const [key, value] of Object.entries(categories)) {
+            const button = document.createElement('button');
+            button.textContent = value;
+            button.className = `category-btn ${key === selectedCategory ? 'active' : ''}`;
+            button.setAttribute('data-category', key);
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                selectedCategory = key;
+                filterCards();
+            });
+            categoriesContainer.appendChild(button);
+        }
+        
+        // Event Listeners
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('flipped');
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            currentCardIndex = currentCardIndex > 0 ? currentCardIndex - 1 : currentCards.length - 1;
+            updateCard();
+            flashcard.classList.remove('flipped');
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            currentCardIndex = currentCardIndex < currentCards.length - 1 ? currentCardIndex + 1 : 0;
+            updateCard();
+            flashcard.classList.remove('flipped');
+        });
+        
+        showRomajiCheckbox.addEventListener('change', () => {
+            romajiEl.style.display = showRomajiCheckbox.checked ? 'block' : 'none';
+        });
+        
+        showPronunciationCheckbox.addEventListener('change', () => {
+            pronunciationEl.style.display = showPronunciationCheckbox.checked ? 'block' : 'none';
+        });
+        
+        shuffleCardsCheckbox.addEventListener('change', () => {
+            isShuffled = shuffleCardsCheckbox.checked;
+            filterCards();
+        });
+        
+        // Functions
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        function filterCards() {
+            if (selectedCategory === 'all') {
+                currentCards = isShuffled ? shuffleArray([...allCards]) : [...allCards];
+            } else {
+                const filteredCards = allCards.filter(card => card.category === selectedCategory);
+                currentCards = isShuffled ? shuffleArray([...filteredCards]) : [...filteredCards];
+            }
+            
+            currentCardIndex = 0;
+            updateCard();
+            flashcard.classList.remove('flipped');
+        }
+        
+        function updateCard() {
+            const card = currentCards[currentCardIndex];
+            
+            japaneseEl.textContent = card.japanese;
+            romajiEl.textContent = card.romaji;
+            pronunciationEl.textContent = `"${card.pronunciation}"`;
+            memoryAidEl.textContent = card.memoryAid;
+            englishEl.textContent = card.english;
+            exampleEl.textContent = card.example;
+            exampleRomajiEl.textContent = card.exampleRomaji;
+            exampleEnglishEl.textContent = card.exampleEnglish;
+            
+            // Show color sample for color cards
+            if (card.color) {
+                colorSample.style.display = 'block';
+                colorSample.style.backgroundColor = card.color;
+            } else {
+                colorSample.style.display = 'none';
+            }
+            
+            cardCounter.textContent = `Card ${currentCardIndex + 1} of ${currentCards.length}`;
+        }
+        
+        // Initialize
+        updateCard();
+    </script>
+</body>
+</html>
